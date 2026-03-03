@@ -29,18 +29,26 @@ export default function UserManagement() {
     setEditForm({ name: user.name, email: user.email, phone: user.phone ?? '', role: user.role, status: user.status });
   };
 
-  const handleUpdate = (e: React.FormEvent) => {
+  const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editUser) return;
-    updateUser(editUser.id, editForm);
-    setEditUser(null);
-    toast.success('User updated!');
+    try {
+      await updateUser(editUser.id, editForm);
+      setEditUser(null);
+      toast.success('User updated!');
+    } catch (err) {
+      toast.error('Failed to update user');
+    }
   };
 
-  const handleDelete = (id: string) => {
-    deleteUser(id);
-    setDeleteConfirm(null);
-    toast.error('User deleted');
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteUser(id);
+      setDeleteConfirm(null);
+      toast.error('User deleted');
+    } catch (err) {
+      toast.error('Failed to delete user');
+    }
   };
 
   const getUserOrderCount = (userId: string) => orders.filter(o => o.userId === userId).length;
@@ -140,10 +148,14 @@ export default function UserManagement() {
                     <td className="px-4 py-3 hidden lg:table-cell text-gray-600 font-medium">₱{getUserSpend(user.id).toFixed(2)}</td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           if (!isCurrentUser) {
-                            updateUser(user.id, { status: user.status === 'active' ? 'inactive' : 'active' });
-                            toast.success(`User ${user.status === 'active' ? 'deactivated' : 'activated'}`);
+                            try {
+                              await updateUser(user.id, { status: user.status === 'active' ? 'inactive' : 'active' });
+                              toast.success(`User ${user.status === 'active' ? 'deactivated' : 'activated'}`);
+                            } catch (err) {
+                              toast.error('Failed to update status');
+                            }
                           }
                         }}
                         disabled={isCurrentUser}

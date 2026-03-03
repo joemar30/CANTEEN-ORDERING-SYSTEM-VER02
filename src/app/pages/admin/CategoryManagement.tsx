@@ -31,17 +31,31 @@ export default function CategoryManagement() {
     setModalOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editCat) { updateCategory(editCat.id, form); toast.success('Category updated!'); }
-    else { addCategory(form); toast.success('Category added!'); }
-    setModalOpen(false);
+    try {
+      if (editCat) { 
+        await updateCategory(editCat.id, form); 
+        toast.success('Category updated!'); 
+      }
+      else { 
+        await addCategory(form); 
+        toast.success('Category added!'); 
+      }
+      setModalOpen(false);
+    } catch (err) {
+      toast.error('Failed to save category');
+    }
   };
 
-  const handleDelete = (id: string) => {
-    deleteCategory(id);
-    setDeleteConfirm(null);
-    toast.error('Category deleted');
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteCategory(id);
+      setDeleteConfirm(null);
+      toast.error('Category deleted');
+    } catch (err) {
+      toast.error('Failed to delete category');
+    }
   };
 
   const getItemCount = (catId: string) => menuItems.filter(m => m.categoryId === catId).length;

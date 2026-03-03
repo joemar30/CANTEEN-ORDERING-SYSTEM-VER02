@@ -9,6 +9,7 @@ export default function MenuPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [addedItems, setAddedItems] = useState<Set<string>>(new Set());
+  const [animatingId, setAnimatingId] = useState<string | null>(null);
 
   const cartCount = getCartCount();
 
@@ -28,28 +29,31 @@ export default function MenuPage() {
       duration: 2000,
     });
     setAddedItems(prev => new Set([...prev, itemId]));
+    setAnimatingId(itemId);
     setTimeout(() => {
       setAddedItems(prev => { const next = new Set(prev); next.delete(itemId); return next; });
+      setAnimatingId(null);
     }, 1000);
   };
 
   return (
     <div>
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-6 mb-6 text-white shadow-lg">
-        <div className="flex items-center justify-between flex-wrap gap-4">
+      <div className="bg-gradient-to-br from-primary to-orange-400 rounded-3xl p-8 mb-8 text-white shadow-xl relative overflow-hidden group">
+        <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 w-48 h-48 bg-white/10 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700" />
+        <div className="relative z-10 flex items-center justify-between flex-wrap gap-6">
           <div>
-            <h1 className="text-xl font-bold">Hello, {currentUser?.name.split(' ')[0]}! 👋</h1>
-            <p className="text-orange-100 text-sm mt-0.5">What would you like to eat today?</p>
+            <h1 className="text-3xl font-bold tracking-tight">Hello, {currentUser?.name.split(' ')[0]}! 👋</h1>
+            <p className="text-white/80 text-lg mt-2 font-medium">What's on your menu today?</p>
           </div>
           <Link
             to="/cart"
-            className="flex items-center gap-2 bg-white text-orange-600 font-medium px-4 py-2 rounded-xl hover:bg-orange-50 transition-colors shadow-sm"
+            className="flex items-center gap-3 bg-white text-primary font-bold px-6 py-3 rounded-2xl hover:bg-white/90 transition-all shadow-lg active:scale-95"
           >
-            <ShoppingCart className="w-4 h-4" />
-            View Cart
+            <ShoppingCart className="w-5 h-5" />
+            <span>My Basket</span>
             {cartCount > 0 && (
-              <span className="bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+              <span className="bg-primary text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold animate-pulse">
                 {cartCount}
               </span>
             )}
@@ -62,21 +66,21 @@ export default function MenuPage() {
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input
           type="text"
-          placeholder="Search food or drinks..."
+          placeholder="Search for your favorite food or drinks..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent shadow-sm"
+          className="w-full pl-12 pr-4 py-4 bg-white border border-border rounded-2xl text-base focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm hover:border-primary/50 transition-all placeholder:text-gray-400"
         />
       </div>
 
       {/* Categories */}
-      <div className="flex gap-2 overflow-x-auto pb-2 mb-6 scrollbar-hide">
+      <div className="flex gap-3 overflow-x-auto pb-4 mb-8 scrollbar-hide">
         <button
           onClick={() => setSelectedCategory('all')}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${
+          className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 active:scale-95 ${
             selectedCategory === 'all'
-              ? 'bg-orange-500 text-white shadow-sm'
-              : 'bg-white text-gray-600 hover:bg-orange-50 border border-gray-200'
+              ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105'
+              : 'bg-white text-gray-600 hover:bg-primary/5 border border-border'
           }`}
         >
           🍴 All Items
@@ -85,10 +89,10 @@ export default function MenuPage() {
           <button
             key={cat.id}
             onClick={() => setSelectedCategory(cat.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 ${
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl text-sm font-bold whitespace-nowrap transition-all flex-shrink-0 active:scale-95 ${
               selectedCategory === cat.id
-                ? 'bg-orange-500 text-white shadow-sm'
-                : 'bg-white text-gray-600 hover:bg-orange-50 border border-gray-200'
+                ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105'
+                : 'bg-white text-gray-600 hover:bg-primary/5 border border-border'
             }`}
           >
             {cat.icon} {cat.name}
@@ -118,53 +122,60 @@ export default function MenuPage() {
             return (
               <div
                 key={item.id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow group"
+                className="bg-white rounded-[2rem] shadow-sm border border-border overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-2 group flex flex-col h-full"
               >
                 {/* Image */}
-                <div className="relative h-44 overflow-hidden bg-orange-50">
+                <div className="relative h-48 overflow-hidden bg-primary/5">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
                   {item.popular && (
-                    <div className="absolute top-2 left-2 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <div className="absolute top-3 left-3 bg-primary text-white text-[10px] uppercase tracking-widest font-black px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
                       <Star className="w-3 h-3 fill-white" />
                       Popular
                     </div>
                   )}
                   {item.stock <= 5 && item.stock > 0 && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                      Only {item.stock} left!
+                    <div className="absolute top-3 right-3 bg-red-600 text-white text-[10px] uppercase font-black px-3 py-1 rounded-full shadow-lg">
+                      Low Stock
                     </div>
                   )}
                 </div>
 
                 {/* Content */}
-                <div className="p-4">
-                  {cat && (
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cat.color}`}>
-                      {cat.icon} {cat.name}
-                    </span>
-                  )}
-                  <h3 className="font-semibold text-gray-800 mt-2 text-sm leading-snug">{item.name}</h3>
-                  <p className="text-gray-500 text-xs mt-1 line-clamp-2">{item.description}</p>
+                <div className="p-5 flex flex-col flex-grow">
+                  <div className="flex justify-between items-start mb-2">
+                    {cat && (
+                      <span className={`text-[10px] uppercase tracking-widest font-black px-2.5 py-1 rounded-lg ${cat.color} bg-opacity-10`}>
+                        {cat.name}
+                      </span>
+                    )}
+                    <span className="font-black text-primary text-lg">₱{item.price}</span>
+                  </div>
+                  <h3 className="font-bold text-gray-800 text-base mb-1 group-hover:text-primary transition-colors line-clamp-1">{item.name}</h3>
+                  <p className="text-gray-400 text-xs line-clamp-2 mb-4 leading-relaxed">{item.description}</p>
 
-                  <div className="flex items-center justify-between mt-3">
-                    <span className="text-orange-600 font-bold">₱{item.price.toFixed(2)}</span>
+                  <div className="mt-auto pt-4 flex gap-2 relative"> {/* Added relative for absolute positioning of heart */}
+                    {animatingId === item.id && (
+                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 animate-bounce pointer-events-none">
+                        <span className="text-2xl text-primary">❤️</span> {/* Heart emoji with primary color */}
+                      </div>
+                    )}
                     <button
                       onClick={() => handleAddToCart(item.id, item.name)}
                       disabled={isAdded || item.stock === 0}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                      className={`flex-grow flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all active:scale-95 ${
                         isAdded
-                          ? 'bg-green-500 text-white'
+                          ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
                           : item.stock === 0
                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                            : 'bg-orange-500 text-white hover:bg-orange-600'
+                            : 'bg-primary text-white shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:bg-orange-600'
                       }`}
                     >
-                      <Plus className="w-3.5 h-3.5" />
-                      {isAdded ? 'Added!' : item.stock === 0 ? 'Sold Out' : 'Add'}
+                      <Plus className="w-4 h-4 stroke-[3px]" />
+                      {isAdded ? 'Success' : item.stock === 0 ? 'Sold Out' : 'Add to Cart'}
                     </button>
                   </div>
                 </div>

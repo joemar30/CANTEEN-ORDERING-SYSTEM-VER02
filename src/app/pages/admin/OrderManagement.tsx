@@ -63,9 +63,13 @@ function OrderRow({ order }: { order: Order }) {
           <div className="flex items-center gap-2 flex-wrap">
             {next && (
               <button
-                onClick={() => {
-                  updateOrderStatus(order.id, next.next);
-                  toast.success(`Order ${order.orderNumber} → ${statusConfig[next.next].label}`);
+                onClick={async () => {
+                  try {
+                    await updateOrderStatus(order.id, next.next);
+                    toast.success(`Order ${order.orderNumber} → ${statusConfig[next.next].label}`);
+                  } catch (err) {
+                    toast.error('Failed to update order status');
+                  }
                 }}
                 className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${next.color}`}
               >
@@ -74,9 +78,13 @@ function OrderRow({ order }: { order: Order }) {
             )}
             {order.status === 'pending' && (
               <button
-                onClick={() => {
-                  updateOrderStatus(order.id, 'cancelled');
-                  toast.error(`Order ${order.orderNumber} cancelled`);
+                onClick={async () => {
+                  try {
+                    await updateOrderStatus(order.id, 'cancelled');
+                    toast.error(`Order ${order.orderNumber} cancelled`);
+                  } catch (err) {
+                    toast.error('Failed to cancel order');
+                  }
                 }}
                 className="text-xs px-3 py-1.5 rounded-lg font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
               >

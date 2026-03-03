@@ -45,8 +45,8 @@ export default function AdminDashboard() {
   })();
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6 animate-in fade-in duration-700">
+      <div className="flex items-center justify-between mb-6 animate-in slide-in-from-left-4 duration-500">
         <div>
           <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
           <p className="text-sm text-gray-500 mt-0.5">{new Date().toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
@@ -55,8 +55,8 @@ export default function AdminDashboard() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
-        {stats.map(stat => (
-          <div key={stat.label} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+        {stats.map((stat, i) => (
+          <div key={stat.label} style={{ animationDelay: `${i * 100}ms` }} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 animate-in slide-in-from-bottom-4 duration-500 hover:-translate-y-1 hover:shadow-lg transition-all">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-500 mb-1">{stat.label}</p>
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Live Orders */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 animate-in slide-in-from-bottom-6 duration-700 delay-300">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <div className="flex items-center gap-2">
               <h2 className="font-semibold text-gray-800">Live Orders</h2>
@@ -106,7 +106,13 @@ export default function AdminDashboard() {
                     <div className="flex-shrink-0 flex gap-1">
                       {order.status === 'pending' && (
                         <button
-                          onClick={() => updateOrderStatus(order.id, 'preparing')}
+                          onClick={async () => {
+                            try {
+                              await updateOrderStatus(order.id, 'preparing');
+                            } catch (err) {
+                              console.error(err);
+                            }
+                          }}
                           className="text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 px-2 py-1 rounded-lg transition-colors"
                         >
                           Accept
@@ -114,7 +120,13 @@ export default function AdminDashboard() {
                       )}
                       {order.status === 'preparing' && (
                         <button
-                          onClick={() => updateOrderStatus(order.id, 'ready')}
+                          onClick={async () => {
+                            try {
+                              await updateOrderStatus(order.id, 'ready');
+                            } catch (err) {
+                              console.error(err);
+                            }
+                          }}
                           className="text-xs bg-green-100 text-green-700 hover:bg-green-200 px-2 py-1 rounded-lg transition-colors"
                         >
                           Ready
@@ -122,7 +134,13 @@ export default function AdminDashboard() {
                       )}
                       {order.status === 'ready' && (
                         <button
-                          onClick={() => updateOrderStatus(order.id, 'completed')}
+                          onClick={async () => {
+                            try {
+                              await updateOrderStatus(order.id, 'completed');
+                            } catch (err) {
+                              console.error(err);
+                            }
+                          }}
                           className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 px-2 py-1 rounded-lg transition-colors"
                         >
                           Complete
@@ -137,7 +155,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Top Selling Items */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 animate-in slide-in-from-bottom-6 duration-700 delay-500">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <h2 className="font-semibold text-gray-800">Top Selling Items</h2>
             <Link to="/admin/reports" className="text-sm text-orange-500 hover:text-orange-600 flex items-center gap-1">
@@ -173,11 +191,12 @@ export default function AdminDashboard() {
           { to: '/admin/categories', label: 'Categories', icon: Tag, color: 'bg-amber-50 text-amber-700 hover:bg-amber-100' },
           { to: '/admin/orders', label: 'All Orders', icon: ShoppingBag, color: 'bg-blue-50 text-blue-700 hover:bg-blue-100' },
           { to: '/admin/users', label: 'Manage Users', icon: Users, color: 'bg-purple-50 text-purple-700 hover:bg-purple-100' },
-        ].map(link => (
+        ].map((link, i) => (
           <Link
             key={link.to}
             to={link.to}
-            className={`flex flex-col items-center gap-2 p-4 rounded-2xl font-medium text-sm transition-colors ${link.color}`}
+            style={{ animationDelay: `${i * 150}ms` }}
+            className={`flex flex-col items-center gap-2 p-4 rounded-2xl font-medium text-sm transition-all hover:-translate-y-1 hover:shadow-md ${link.color}`}
           >
             <link.icon className="w-6 h-6" />
             {link.label}

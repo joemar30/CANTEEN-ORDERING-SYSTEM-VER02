@@ -52,7 +52,7 @@ export default function MenuManagement() {
     setModalOpen(true);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const data = {
       name: form.name,
@@ -64,20 +64,28 @@ export default function MenuManagement() {
       stock: parseInt(form.stock) || 0,
       popular: form.popular,
     };
-    if (editItem) {
-      updateMenuItem(editItem.id, data);
-      toast.success('Menu item updated!');
-    } else {
-      addMenuItem(data);
-      toast.success('Menu item added!');
+    try {
+      if (editItem) {
+        await updateMenuItem(editItem.id, data);
+        toast.success('Menu item updated!');
+      } else {
+        await addMenuItem(data);
+        toast.success('Menu item added!');
+      }
+      setModalOpen(false);
+    } catch (err) {
+      toast.error('Operation failed. Please try again.');
     }
-    setModalOpen(false);
   };
 
-  const handleDelete = (id: string) => {
-    deleteMenuItem(id);
-    setDeleteConfirm(null);
-    toast.error('Menu item deleted');
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteMenuItem(id);
+      setDeleteConfirm(null);
+      toast.error('Menu item deleted');
+    } catch (err) {
+      toast.error('Failed to delete item.');
+    }
   };
 
   const getCatName = (id: string) => categories.find(c => c.id === id)?.name ?? 'Unknown';
