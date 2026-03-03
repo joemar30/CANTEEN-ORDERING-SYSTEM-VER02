@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🍽️ CanteenPOS — Canteen Ordering Management System
 
 > A full-stack, modern Point-of-Sale and ordering platform built for school and workplace canteens. Powered by a **React + Vite** frontend and a **PHP + MySQL** backend, CanteenPOS delivers a seamless dining experience for customers and a powerful management terminal for administrators.
@@ -255,3 +256,7 @@ This project is for academic and educational purposes.
 <div align="center">
   Built with ❤️ using React, PHP & MySQL
 </div>
+=======
+# CANTEEN-ORDERING-SYSTEM-VER02
+ordering canteen system can track order and etc.
+>>>>>>> d9e1b367d5679dd9efcfe6255b3ae4c1d05e4383
