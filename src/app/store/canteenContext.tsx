@@ -246,7 +246,8 @@ export function CanteenProvider({ children }: { children: React.ReactNode }) {
   // ── Menu ────────────────────────────────────────────────────
 
   const addMenuItem = async (item: Omit<MenuItem, 'id'>) => {
-    const res = await menuApi.create(item);
+    const apiItem = { ...item, popular: item.popular ?? false };
+    const res = await menuApi.create(apiItem);
     if (res.success) {
       const newItem: MenuItem = { ...item, id: res.id };
       setMenuItems(prev => [...prev, newItem]);

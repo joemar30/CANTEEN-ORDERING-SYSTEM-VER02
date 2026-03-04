@@ -1,6 +1,6 @@
 // API utility for communicating with the PHP backend
 
-const API_BASE = "http://127.0.0.1:8000/api";
+const API_BASE = "http://localhost/Canteen%20Ordering%20System/api";
 
 function getToken(): string | null {
   return sessionStorage.getItem("canteen_token");
